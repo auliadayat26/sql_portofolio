@@ -1,0 +1,54 @@
+--postgres nya karena pake di locall
+
+--buat tabel students
+create table students(
+	student_id varchar(20) not null,
+	first_name varchar(40),
+	last_name varchar(40),
+	faculty_id varchar(20),
+	constraint studenst_pk primary key (student_id)  --students_pk adalah nama primarykeynya dan constraint buat batasan, PK bisa lebih 1 column
+);
+
+--buat tabel faculties, harusnya buat tabel faculty dulu baru students, karena students ngerefernya ke faculties
+create table faculties(
+	faculty_id varchar(20) not null,
+	faculty_name varchar(50),
+	faculty_dekan varchar(40),
+	descriptiom text,
+	
+	constraint faculties_pk primary key (faculty_id)
+);
+
+--ADA FEATURE DBEAVER YG BUAT GAMPANG JUGA >>properties buat PK atau FK dengan klik2 >> lalu save dan copy syntaxnya
+
+ALTER TABLE public.students  --akan mengubah tabel students di schemas public
+ADD CONSTRAINT students_reffaculties_fk --menambah constraint dengan nama srfk, FK juga bisa antar schemas
+	FOREIGN KEY (faculty_id) REFERENCES public.faculties(faculty_id); --menggunakan constraint foreign key dg reference faculty id (column yg sama)
+
+	
+--dimana student ngerefer facultis (harus ada datanya)
+--data faculties
+insert into faculties (faculty_id,faculty_name,faculty_dekan)
+values('10013', 'Teknik Industri','Andy');
+insert into faculties (faculty_id,faculty_name,faculty_dekan)
+values('10014', 'Teknik Informatika','Bambang');
+
+--data students
+insert into students(student_id,first_name,last_name,faculty_id)
+values('10013001','Rafi','Ahmad','10013');
+insert into students(student_id,first_name,last_name,faculty_id)
+values('10013001','Siti','Fari','10013'); --eror karena student_id sudah ada(PK)
+
+insert into students(student_id,first_name,last_name,faculty_id)
+values('10013002','Siti','Fari','10013'); --nomor lain yg blm dipakai
+
+insert into students(student_id,first_name,last_name,faculty_id)
+values('10013003','Siti','Fari','100213'); --eror faculty_idnya tidak terdaftar di table faculties karena sudh di foreign key
+
+--solusinya tambah data faculties lagi
+insert into faculties (faculty_id,faculty_name,faculty_dekan)
+values('100213', 'Teknik Pertanian','Marno');
+
+--coba lagi bisa
+insert into students(student_id,first_name,last_name,faculty_id)
+values('100213003','Siti','Fari','100213');
